@@ -1,0 +1,470 @@
+import { Tool, HouseholdService, Technician, ServiceBooking, ToolRental, GrievanceComplaint, NotificationItem } from '../types';
+
+export const INITIAL_TOOLS: Tool[] = [
+  {
+    id: 1,
+    name: 'VoltMax 20V Cordless Rotary Hammer Drill',
+    category: 'Power Drills & Drivers',
+    description: 'Heavy-duty 3-mode SDS-Plus rotary hammer drill with 2.6 Joules impact energy, dual 4.0Ah batteries, and rapid dual-voltage charger. Ideal for concrete anchor holes and masonry.',
+    dailyRate: 150,
+    securityDeposit: 400,
+    availableQuantity: 4,
+    totalQuantity: 5,
+    status: 'AVAILABLE',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/1a/Ramset_Dyna_Drill.jpg',
+    specs: ['2.6J Impact Energy', 'Dual 20V 4.0Ah Li-Ion', '0-1500 RPM / 0-5500 BPM', 'SDS-Plus Quick Chuck'],
+    powerSource: '20V Cordless Battery',
+    rating: 4.9,
+    reviewCount: 42
+  },
+  {
+    id: 2,
+    name: 'Kranzle HydroBlast 3000 PSI Pressure Washer',
+    category: 'Surface & Pressure Cleaners',
+    description: 'Commercial grade brass triplex pump pressure washer delivering 3000 PSI at 2.5 GPM. Includes 5 quick-connect spray tips and a 50-foot non-marring wire-braided hose.',
+    dailyRate: 220,
+    securityDeposit: 600,
+    availableQuantity: 3,
+    totalQuantity: 3,
+    status: 'AVAILABLE',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/4/43/Pressure_Washer.JPG',
+    specs: ['3000 PSI Max Pressure', '2.5 GPM Water Flow', '50ft Commercial Hose', 'Triplex Brass Pump'],
+    powerSource: 'Electric 220V',
+    rating: 4.8,
+    reviewCount: 38
+  },
+  {
+    id: 3,
+    name: 'PrecisionPro 360° 3D Cross-Line Laser Level',
+    category: 'Measuring & Layout',
+    description: 'Ultra-bright green beam 3-plane self-leveling laser level with magnetic pivot base, 1/4" tripod mount, and pulse outdoor mode up to 60 meters range.',
+    dailyRate: 120,
+    securityDeposit: 350,
+    availableQuantity: 5,
+    totalQuantity: 6,
+    status: 'AVAILABLE',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/e9/Laser-Level.jpg',
+    specs: ['3x 360° Green Beams', '±3mm at 10m Accuracy', 'Self-Leveling ±4°', 'Magnetic Swivel Base'],
+    powerSource: 'Rechargeable Li-Ion',
+    rating: 4.9,
+    reviewCount: 29
+  },
+  {
+    id: 4,
+    name: 'Apex 1800W Dual-Bevel Sliding Compound Miter Saw',
+    category: 'Saws & Cutting',
+    description: '10-inch carbide-tipped precision sliding compound miter saw with shadow cutline indicator, 45-degree left/right bevel, and integrated workpiece clamp.',
+    dailyRate: 180,
+    securityDeposit: 500,
+    availableQuantity: 2,
+    totalQuantity: 3,
+    status: 'AVAILABLE',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/4/43/Woodworker_using_sliding_mitre_saw.jpg',
+    specs: ['1800W High-Torque Motor', '10-inch 60T Carbide Blade', '45° Left/Right Bevel', 'Laser / Shadow Guide'],
+    powerSource: 'Corded 230V',
+    rating: 4.7,
+    reviewCount: 19
+  },
+  {
+    id: 5,
+    name: 'EcoCraft 160cc 4-Stroke Self-Propelled Lawn Mower',
+    category: 'Garden & Landscaping',
+    description: 'Self-propelled 21-inch steel deck lawn mower featuring 3-in-1 mulch, side discharge, and rear bag collection with 7-position single lever height adjustment.',
+    dailyRate: 200,
+    securityDeposit: 550,
+    availableQuantity: 3,
+    totalQuantity: 4,
+    status: 'AVAILABLE',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/2/24/Lawn_mower.jpg',
+    specs: ['160cc OHV 4-Stroke Engine', '21-inch Cutting Swath', '7-Stage Height Selector', '65L High-Flow Grass Bag'],
+    powerSource: 'Petrol 4-Stroke',
+    rating: 4.8,
+    reviewCount: 31
+  },
+  {
+    id: 6,
+    name: 'TitanPower 5kVA Silent Inverter Generator',
+    category: 'Generators & Power Units',
+    description: 'Whisper-quiet pure sine wave inverter generator producing 5000 Watts surge power with digital multi-function LCD telemetry and clean energy safe for sensitive electronics.',
+    dailyRate: 350,
+    securityDeposit: 900,
+    availableQuantity: 2,
+    totalQuantity: 2,
+    status: 'AVAILABLE',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/2/27/Portable_electrical_generator_side.jpg',
+    specs: ['5000W Peak / 4500W Rated', 'Pure Sine Wave < 3% THD', '58 dB at 7m Sound Level', '10hr Run Time at 50% Load'],
+    powerSource: 'Petrol Inverter',
+    rating: 4.9,
+    reviewCount: 24
+  },
+  {
+    id: 7,
+    name: 'WetDry Pro 35L Heavy Industrial Dust Extractor',
+    category: 'Surface & Pressure Cleaners',
+    description: 'Class-M certified automatic filter cleaning vacuum for plaster dust, drywall sanding, and masonry slurry with synchronized power tool auto-start socket.',
+    dailyRate: 140,
+    securityDeposit: 350,
+    availableQuantity: 4,
+    totalQuantity: 4,
+    status: 'AVAILABLE',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/4/4c/Circular_saw_and_rail_%283%29.jpg',
+    specs: ['1400W Industrial Motor', '35L Stainless Tank', 'Class-M HEPA Dual Filters', 'Auto-Pulse Filter Shake'],
+    powerSource: 'Electric 230V',
+    rating: 4.6,
+    reviewCount: 15
+  },
+  {
+    id: 8,
+    name: 'CeramicMaster 800mm Monorail Tile Cutter',
+    category: 'Saws & Cutting',
+    description: 'Heavy duty ball-bearing manual tile cutter for large porcelain and ceramic floor slabs with titanium scoring wheel and laser alignment assist.',
+    dailyRate: 110,
+    securityDeposit: 300,
+    availableQuantity: 3,
+    totalQuantity: 3,
+    status: 'AVAILABLE',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/7/70/MiterSaw.jpg',
+    specs: ['800mm Max Cut Length', '16mm Max Tile Thickness', 'Titanium Scoring Wheel', 'Steel Monorail Guide'],
+    powerSource: 'Manual Precision',
+    rating: 4.7,
+    reviewCount: 22
+  }
+];
+
+export const INITIAL_SERVICES: HouseholdService[] = [
+  {
+    id: 1,
+    name: 'Master Electrician Diagnostics & Repair',
+    category: 'Electrical',
+    description: 'Certified electrical troubleshooting for tripping circuit breakers, short circuits, switchboard replacements, smart home wiring, and earthing inspection.',
+    basePrice: 299,
+    estimatedHours: '1.5 - 2.5 hrs',
+    status: 'ACTIVE',
+    popular: true,
+    warranty: '30-Day Workmanship Guarantee',
+    includedTasks: ['Full Circuit Load Audit', 'Short-Circuit Diagnostics', 'Switchboard Repair/Replacement', 'Safety Earthing Verification']
+  },
+  {
+    id: 2,
+    name: 'Advanced AC Repair, Deep Gas & Jet Wash',
+    category: 'AC & Climate Control',
+    description: 'Comprehensive split and window AC servicing including high-pressure indoor foam jet wash, outdoor condenser cleanse, refrigerant gas top-up, and cooling optimization.',
+    basePrice: 449,
+    estimatedHours: '2.0 hrs',
+    status: 'ACTIVE',
+    popular: true,
+    warranty: '45-Day Cooling Guarantee',
+    includedTasks: ['High-Pressure Jet Foam Clean', 'Condenser & Coil Scrub', 'R32/R410A Pressure Check', 'Drain Pipe Leakage Flush']
+  },
+  {
+    id: 3,
+    name: 'Master Plumbing & Leak Detection',
+    category: 'Plumbing',
+    description: 'Professional plumbing solutions for kitchen and bathroom tap leaks, pipe bursts, concealed pipeline seepage detection, overhead water tank valve fixing, and drainage clearing.',
+    basePrice: 249,
+    estimatedHours: '1.0 - 2.0 hrs',
+    status: 'ACTIVE',
+    popular: true,
+    warranty: '30-Day Leak-Free Guarantee',
+    includedTasks: ['Acoustic Seepage Detection', 'Fixture & Cartridge Replaced', 'Drainage Blockage Clearing', 'Pressure Valve Calibration']
+  },
+  {
+    id: 4,
+    name: 'Deep Whole-Home Sanitization & Cleaning',
+    category: 'Deep Cleaning',
+    description: 'Intensive mechanized cleaning including scrubbing of tiled surfaces, kitchen degreasing, bathroom descaling, balcony pressure washing, and sanitized microfiber wiping.',
+    basePrice: 899,
+    estimatedHours: '4.0 - 6.0 hrs',
+    status: 'ACTIVE',
+    popular: false,
+    warranty: '100% Satisfaction Re-Clean',
+    includedTasks: ['Industrial Floor Buffing', 'Kitchen Chimney Degrease', 'Bathroom Acid-Free Descale', 'High-Touch Surface Sterilization']
+  },
+  {
+    id: 5,
+    name: 'Architectural Carpentry & Furniture Repair',
+    category: 'Carpentry',
+    description: 'Skilled carpentry services for wooden doors, hydraulic hinge alignment, modular kitchen shutter repair, lock replacements, customized partition fixing, and termite remediation.',
+    basePrice: 349,
+    estimatedHours: '2.0 - 3.5 hrs',
+    status: 'ACTIVE',
+    popular: false,
+    warranty: '30-Day Fitment Guarantee',
+    includedTasks: ['Hydraulic Hinge Alignment', 'Deadbolt & Lock Fitting', 'Modular Drawer Channel Repair', 'Wooden Surface Trimming']
+  },
+  {
+    id: 6,
+    name: 'Moisture Sealing & Waterproofing Patchwork',
+    category: 'Painting & Masonry',
+    description: 'Targeted wall dampness inspection, efflorescence treatment, elastomeric polymer membrane coating, and aesthetic color-match touch-up.',
+    basePrice: 599,
+    estimatedHours: '3.0 - 4.5 hrs',
+    status: 'ACTIVE',
+    popular: false,
+    warranty: '90-Day Seep Resistance Guarantee',
+    includedTasks: ['Moisture Level Digital Metering', 'Crack Filling & Polymer Seal', 'Anti-Fungal Primer Base', 'Weatherproof Topcoat Finish']
+  }
+];
+
+export const INITIAL_TECHNICIANS: Technician[] = [
+  {
+    id: 1,
+    name: 'Muthu Vel',
+    email: 'muthu.tech@smart.com',
+    phone: '+91 98401 23456',
+    city: 'Madurai',
+    address: '12 Vaigai North Bank Road, Goripalayam',
+    latitude: 9.9252,
+    longitude: 78.1198,
+    experienceYears: 9,
+    averageRating: 4.9,
+    totalReviews: 86,
+    verificationStatus: 'APPROVED',
+    services: ['Master Electrician Diagnostics & Repair', 'Advanced AC Repair, Deep Gas & Jet Wash'],
+    avatarUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/37/Electrician_Working.jpg',
+    availability: [
+      { day: 'MONDAY', startTime: '09:00', endTime: '18:00', available: true },
+      { day: 'TUESDAY', startTime: '09:00', endTime: '18:00', available: true },
+      { day: 'WEDNESDAY', startTime: '09:00', endTime: '18:00', available: true },
+      { day: 'THURSDAY', startTime: '09:00', endTime: '18:00', available: true },
+      { day: 'FRIDAY', startTime: '09:00', endTime: '18:00', available: true },
+      { day: 'SATURDAY', startTime: '09:00', endTime: '15:00', available: true },
+      { day: 'SUNDAY', startTime: '10:00', endTime: '14:00', available: false }
+    ]
+  },
+  {
+    id: 2,
+    name: 'Rajesh Kumar',
+    email: 'rajesh.tech@smart.com',
+    phone: '+91 98765 00001',
+    city: 'Bengaluru',
+    address: '#14 8th Main, Indiranagar, Bengaluru',
+    latitude: 12.9716,
+    longitude: 77.5946,
+    experienceYears: 7,
+    averageRating: 4.8,
+    totalReviews: 64,
+    verificationStatus: 'APPROVED',
+    services: ['Master Electrician Diagnostics & Repair', 'Advanced AC Repair, Deep Gas & Jet Wash'],
+    avatarUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/19/Electrician.jpg',
+    availability: [
+      { day: 'MONDAY', startTime: '08:30', endTime: '17:30', available: true },
+      { day: 'TUESDAY', startTime: '08:30', endTime: '17:30', available: true },
+      { day: 'WEDNESDAY', startTime: '08:30', endTime: '17:30', available: true },
+      { day: 'THURSDAY', startTime: '08:30', endTime: '17:30', available: true },
+      { day: 'FRIDAY', startTime: '08:30', endTime: '17:30', available: true },
+      { day: 'SATURDAY', startTime: '09:00', endTime: '14:00', available: true },
+      { day: 'SUNDAY', startTime: '09:00', endTime: '12:00', available: false }
+    ]
+  },
+  {
+    id: 3,
+    name: 'Suresh Babu',
+    email: 'suresh.tech@smart.com',
+    phone: '+91 98765 00002',
+    city: 'Bengaluru',
+    address: '#89 4th Cross, Koramangala 4th Block',
+    latitude: 12.9352,
+    longitude: 77.6245,
+    experienceYears: 11,
+    averageRating: 4.95,
+    totalReviews: 112,
+    verificationStatus: 'APPROVED',
+    services: ['Master Plumbing & Leak Detection', 'Deep Whole-Home Sanitization & Cleaning'],
+    avatarUrl: 'https://upload.wikimedia.org/wikipedia/commons/d/df/Plumber_at_work_2010_USA.jpg',
+    availability: [
+      { day: 'MONDAY', startTime: '09:00', endTime: '19:00', available: true },
+      { day: 'TUESDAY', startTime: '09:00', endTime: '19:00', available: true },
+      { day: 'WEDNESDAY', startTime: '09:00', endTime: '19:00', available: true },
+      { day: 'THURSDAY', startTime: '09:00', endTime: '19:00', available: true },
+      { day: 'FRIDAY', startTime: '09:00', endTime: '19:00', available: true },
+      { day: 'SATURDAY', startTime: '09:00', endTime: '18:00', available: true },
+      { day: 'SUNDAY', startTime: '10:00', endTime: '16:00', available: true }
+    ]
+  },
+  {
+    id: 4,
+    name: 'Arunachalam S.',
+    email: 'arun.tech@smart.com',
+    phone: '+91 98403 99881',
+    city: 'Chennai',
+    address: '45 Gandhi Nagar 2nd Main, Adyar',
+    latitude: 13.0012,
+    longitude: 80.2565,
+    experienceYears: 5,
+    averageRating: 4.7,
+    totalReviews: 34,
+    verificationStatus: 'APPROVED',
+    services: ['Architectural Carpentry & Furniture Repair', 'Moisture Sealing & Waterproofing Patchwork'],
+    avatarUrl: 'https://upload.wikimedia.org/wikipedia/commons/4/43/Woodworker_using_sliding_mitre_saw.jpg',
+    availability: [
+      { day: 'MONDAY', startTime: '09:00', endTime: '18:00', available: true },
+      { day: 'TUESDAY', startTime: '09:00', endTime: '18:00', available: true },
+      { day: 'WEDNESDAY', startTime: '09:00', endTime: '18:00', available: true },
+      { day: 'THURSDAY', startTime: '09:00', endTime: '18:00', available: true },
+      { day: 'FRIDAY', startTime: '09:00', endTime: '18:00', available: true },
+      { day: 'SATURDAY', startTime: '09:00', endTime: '14:00', available: false },
+      { day: 'SUNDAY', startTime: '09:00', endTime: '12:00', available: false }
+    ]
+  },
+  {
+    id: 5,
+    name: 'Karthik Raja (New Applicant)',
+    email: 'karthik.new@smart.com',
+    phone: '+91 98944 11223',
+    city: 'Madurai',
+    address: '88 KK Nagar East Main Road',
+    latitude: 9.9320,
+    longitude: 78.1450,
+    experienceYears: 4,
+    averageRating: 0,
+    totalReviews: 0,
+    verificationStatus: 'PENDING',
+    services: ['Master Plumbing & Leak Detection'],
+    avatarUrl: 'https://upload.wikimedia.org/wikipedia/commons/f/fa/Plumber_at_work.jpg',
+    availability: [
+      { day: 'MONDAY', startTime: '09:00', endTime: '17:00', available: true },
+      { day: 'TUESDAY', startTime: '09:00', endTime: '17:00', available: true },
+      { day: 'WEDNESDAY', startTime: '09:00', endTime: '17:00', available: true },
+      { day: 'THURSDAY', startTime: '09:00', endTime: '17:00', available: true },
+      { day: 'FRIDAY', startTime: '09:00', endTime: '17:00', available: true },
+      { day: 'SATURDAY', startTime: '09:00', endTime: '14:00', available: true },
+      { day: 'SUNDAY', startTime: '09:00', endTime: '12:00', available: false }
+    ]
+  }
+];
+
+export const INITIAL_BOOKINGS: ServiceBooking[] = [
+  {
+    id: 101,
+    customerName: 'Priya Sharma',
+    customerEmail: 'customer@smart.com',
+    customerPhone: '+91 98765 00003',
+    technicianId: 1,
+    technicianName: 'Muthu Vel',
+    serviceId: 2,
+    serviceName: 'Advanced AC Repair, Deep Gas & Jet Wash',
+    bookingDate: '2026-10-30',
+    bookingTime: '11:00 AM',
+    location: '15 Anna Nagar, Madurai, TN',
+    description: 'Split AC low cooling issue, outdoor fan motor check and full jet wash.',
+    status: 'ACCEPTED',
+    estimatedAmount: 449,
+    paymentStatus: 'PAID',
+    paymentMethod: 'UPI',
+    transactionId: 'TXN-UPI-8849201',
+    createdAt: '2026-10-29T07:15:00Z',
+    rating: 5,
+    reviewComment: 'Arrived promptly on time with all pressure tools. AC cooling feels like new!'
+  },
+  {
+    id: 102,
+    customerName: 'Priya Sharma',
+    customerEmail: 'customer@smart.com',
+    customerPhone: '+91 98765 00003',
+    technicianId: 3,
+    technicianName: 'Suresh Babu',
+    serviceId: 3,
+    serviceName: 'Master Plumbing & Leak Detection',
+    bookingDate: '2026-10-31',
+    bookingTime: '03:00 PM',
+    location: '42 Orchid Residency, 5th Main, HSR Layout, Bengaluru',
+    description: 'Concealed kitchen pipe dripping under granite sink counter.',
+    status: 'IN_PROGRESS',
+    estimatedAmount: 249,
+    paymentStatus: 'PENDING',
+    paymentMethod: 'CASH',
+    createdAt: '2026-10-28T14:30:00Z'
+  }
+];
+
+export const INITIAL_RENTALS: ToolRental[] = [
+  {
+    id: 501,
+    customerName: 'Priya Sharma',
+    customerEmail: 'customer@smart.com',
+    customerPhone: '+91 98765 00003',
+    toolId: 1,
+    toolName: 'VoltMax 20V Cordless Rotary Hammer Drill',
+    toolImageUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/1a/Ramset_Dyna_Drill.jpg',
+    startDate: '2026-10-29',
+    endDate: '2026-10-31',
+    rentalDays: 3,
+    dailyRate: 150,
+    rentalAmount: 450,
+    securityDeposit: 400,
+    lateFee: 0,
+    damageCharge: 0,
+    totalAmount: 850,
+    refundableDeposit: 400,
+    status: 'ACTIVE',
+    paymentStatus: 'PAID',
+    paymentMethod: 'UPI',
+    transactionId: 'TXN-RENT-3991024',
+    createdAt: '2026-10-29T06:00:00Z'
+  },
+  {
+    id: 502,
+    customerName: 'Priya Sharma',
+    customerEmail: 'customer@smart.com',
+    customerPhone: '+91 98765 00003',
+    toolId: 2,
+    toolName: 'Kranzle HydroBlast 3000 PSI Pressure Washer',
+    toolImageUrl: 'https://upload.wikimedia.org/wikipedia/commons/4/43/Pressure_Washer.JPG',
+    startDate: '2026-10-25',
+    endDate: '2026-10-27',
+    actualReturnDate: '2026-10-27',
+    rentalDays: 2,
+    dailyRate: 220,
+    rentalAmount: 440,
+    securityDeposit: 600,
+    lateFee: 0,
+    damageCharge: 0,
+    totalAmount: 1040,
+    refundableDeposit: 600,
+    status: 'RETURNED',
+    paymentStatus: 'PAID',
+    paymentMethod: 'CARD',
+    transactionId: 'TXN-RENT-2201994',
+    createdAt: '2026-10-25T08:30:00Z'
+  }
+];
+
+export const INITIAL_NOTIFICATIONS: NotificationItem[] = [
+  {
+    id: 'notif-1',
+    title: 'Booking Confirmed with Muthu Vel',
+    message: 'Your AC Repair appointment is confirmed for Friday, Oct 30 at 11:00 AM.',
+    type: 'BOOKING',
+    timestamp: '15 mins ago',
+    read: false
+  },
+  {
+    id: 'notif-2',
+    title: 'Tool Rental Dispatched',
+    message: 'VoltMax 20V Rotary Hammer Drill is ready for pickup or direct courier drop.',
+    type: 'RENTAL',
+    timestamp: '1 hour ago',
+    read: false
+  },
+  {
+    id: 'notif-3',
+    title: 'Security Deposit Refund Processed',
+    message: '₹600.00 refundable deposit for Kranzle Pressure Washer returned to your UPI handle.',
+    type: 'PAYMENT',
+    timestamp: 'Yesterday',
+    read: true
+  }
+];
+
+export const INITIAL_COMPLAINTS: GrievanceComplaint[] = [
+  {
+    id: 901,
+    bookingId: 101,
+    subject: 'Minor pipe washer fitting query',
+    description: 'Technician was super helpful, just wanted to check if replacement washer is covered under the 30-day warranty.',
+    status: 'RESOLVED',
+    adminResponse: 'Yes, all replacement O-rings and washers installed by our technician are 100% covered under the 30-Day Workmanship Warranty at zero cost.',
+    createdAt: '2026-10-28T16:00:00Z'
+  }
+];

@@ -1,0 +1,306 @@
+{
+  "info": {
+    "name": "Smart Household Service Booking & Tool Rental API Collection",
+    "_postman_id": "smart-household-api-v1",
+    "description": "Complete REST API collection for Smart Household MCA Project with Authentication, Customer, Technician, Admin, Services, Tools, Bookings, Payments, Reviews, Complaints, Recommendations, and Notifications.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080/api", "type": "string" },
+    { "key": "customerToken", "value": "", "type": "string" },
+    { "key": "technicianToken", "value": "", "type": "string" },
+    { "key": "adminToken", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Register Customer",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Priya Sharma\",\n  \"email\": \"customer@smart.com\",\n  \"password\": \"Customer@123\",\n  \"phone\": \"+91 9876500003\",\n  \"role\": \"CUSTOMER\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] }
+          }
+        },
+        {
+          "name": "Register Technician",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Rajesh Kumar\",\n  \"email\": \"rajesh.tech@smart.com\",\n  \"password\": \"Tech@123\",\n  \"phone\": \"+91 9876500001\",\n  \"role\": \"TECHNICIAN\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] }
+          }
+        },
+        {
+          "name": "Login (Customer)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"customer@smart.com\",\n  \"password\": \"Customer@123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Login (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@smart.com\",\n  \"password\": \"Admin@123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Public Services & Tools",
+      "item": [
+        {
+          "name": "Get All Active Services",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/services", "host": ["{{baseUrl}}"], "path": ["services"] }
+          }
+        },
+        {
+          "name": "Search Services",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/services/search?query=plumb", "host": ["{{baseUrl}}"], "path": ["services", "search"], "query": [{ "key": "query", "value": "plumb" }] }
+          }
+        },
+        {
+          "name": "Get Available Tools",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/tools", "host": ["{{baseUrl}}"], "path": ["tools"] }
+          }
+        },
+        {
+          "name": "Get Recommended Technicians (Rule-Based + GPS)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/technicians/recommended?serviceId=1&latitude=12.9716&longitude=77.5946", "host": ["{{baseUrl}}"], "path": ["technicians", "recommended"], "query": [{ "key": "serviceId", "value": "1" }, { "key": "latitude", "value": "12.9716" }, { "key": "longitude", "value": "77.5946" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Customer Operations",
+      "item": [
+        {
+          "name": "Get Customer Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{customerToken}}" }],
+            "url": { "raw": "{{baseUrl}}/customer/profile", "host": ["{{baseUrl}}"], "path": ["customer", "profile"] }
+          }
+        },
+        {
+          "name": "Update Customer Location & Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Priya Sharma\",\n  \"phone\": \"+91 9876500003\",\n  \"address\": \"#42, 5th Cross, HSR Layout\",\n  \"city\": \"Bengaluru\",\n  \"pincode\": \"560102\",\n  \"latitude\": 12.9121,\n  \"longitude\": 77.6446\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/customer/profile", "host": ["{{baseUrl}}"], "path": ["customer", "profile"] }
+          }
+        },
+        {
+          "name": "Create Service Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"technicianId\": 1,\n  \"serviceId\": 1,\n  \"bookingDate\": \"2026-08-28\",\n  \"bookingTime\": \"10:00:00\",\n  \"location\": \"#42, 5th Cross, HSR Layout, Bengaluru\",\n  \"description\": \"Kitchen tap leaking and drainage block\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/customer/bookings", "host": ["{{baseUrl}}"], "path": ["customer", "bookings"] }
+          }
+        },
+        {
+          "name": "Rent a Tool",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"toolId\": 1,\n  \"startDate\": \"2026-08-28\",\n  \"endDate\": \"2026-08-30\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/customer/rentals", "host": ["{{baseUrl}}"], "path": ["customer", "rentals"] }
+          }
+        },
+        {
+          "name": "Simulate Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookingId\": 1,\n  \"amount\": 299.0,\n  \"paymentMethod\": \"UPI\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/customer/payments", "host": ["{{baseUrl}}"], "path": ["customer", "payments"] }
+          }
+        },
+        {
+          "name": "Submit Rating & Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookingId\": 1,\n  \"rating\": 5,\n  \"comment\": \"Quick fix and polite technician!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/customer/reviews", "host": ["{{baseUrl}}"], "path": ["customer", "reviews"] }
+          }
+        },
+        {
+          "name": "Raise Grievance / Complaint",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookingId\": 1,\n  \"subject\": \"Pipe leak restarted\",\n  \"description\": \"The repair started leaking again after 2 hours.\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/customer/complaints", "host": ["{{baseUrl}}"], "path": ["customer", "complaints"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Technician Operations",
+      "item": [
+        {
+          "name": "Get Technician Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{technicianToken}}" }],
+            "url": { "raw": "{{baseUrl}}/technician/profile", "host": ["{{baseUrl}}"], "path": ["technician", "profile"] }
+          }
+        },
+        {
+          "name": "Add Weekly Working Hours",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{technicianToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"day\": \"MONDAY\",\n  \"startTime\": \"09:00:00\",\n  \"endTime\": \"18:00:00\",\n  \"available\": true\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/technician/availability", "host": ["{{baseUrl}}"], "path": ["technician", "availability"] }
+          }
+        },
+        {
+          "name": "Update Booking Job Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{technicianToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"ACCEPTED\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/technician/bookings/1/status", "host": ["{{baseUrl}}"], "path": ["technician", "bookings", "1", "status"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Admin Operations",
+      "item": [
+        {
+          "name": "Get Dashboard Summary Stats",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/admin/dashboard/summary", "host": ["{{baseUrl}}"], "path": ["admin", "dashboard", "summary"] }
+          }
+        },
+        {
+          "name": "Approve Technician Verification",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"APPROVED\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/admin/technicians/1/status", "host": ["{{baseUrl}}"], "path": ["admin", "technicians", "1", "status"] }
+          }
+        },
+        {
+          "name": "Process Tool Return & Settle Deposit",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"actualReturnDate\": \"2026-08-30\",\n  \"damageCharge\": 0.0,\n  \"adminNotes\": \"Returned in pristine condition. Security deposit fully refunded.\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/admin/rentals/1/process-return", "host": ["{{baseUrl}}"], "path": ["admin", "rentals", "1", "process-return"] }
+          }
+        },
+        {
+          "name": "Resolve Complaint & Post Response",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"RESOLVED\",\n  \"adminResponse\": \"Technician was dispatched for free rework. Issue resolved.\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/admin/complaints/1", "host": ["{{baseUrl}}"], "path": ["admin", "complaints", "1"] }
+          }
+        }
+      ]
+    }
+  ]
+}

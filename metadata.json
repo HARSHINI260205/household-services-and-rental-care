@@ -1,0 +1,6 @@
+{
+  "name": "Craft & Care - Tool Rental & Household Services",
+  "description": "Premium on-demand household services and professional tool & equipment rental marketplace with live booking, transparent deposit calculation, and certified technicians.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
